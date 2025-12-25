@@ -1,3 +1,8 @@
+/**
+ * Simple Virtual File System Simulation
+ * Purpose: To learn how kernels manage file metadata and allocation 
+ * without relying on a real physical disk.
+ */
 #include <stdio.h>
 #include <string.h>
 #include "filesystem.h"
@@ -35,7 +40,10 @@ void create_file_sim(const char* filename, int size) {
 
     for (int i = 0; i < MAX_FILES; i++) {
         if (!file_system[i].allocated) {
-            strcpy(file_system[i].name, filename);
+            //strcpy(file_system[i].name, filename);
+            // Using strncpy prevents buffer overflows
+            strncpy(file_system[i].name, filename, MAX_FILENAME_LEN - 1);
+            file_system[i].name[MAX_FILENAME_LEN - 1] = '\0'; // Manual null-termination for safety
             file_system[i].size = size;
             file_system[i].allocated = 1;
             num_active_files++;
@@ -49,12 +57,13 @@ void delete_file_sim(const char* filename) {
     for (int i = 0; i < MAX_FILES; i++) {
         if (file_system[i].allocated && strcmp(file_system[i].name, filename) == 0) {
             file_system[i].allocated = 0;
-            //strcpy(file_system[i].name, ""); // Optional: clear name
-            //file_system[i].size = 0;       // Optional: clear size
+            memset(file_system[i].name, 0, MAX_FILENAME_LEN); // Wipe the name
+            file_system[i].size = 0;                          // Reset the size
             num_active_files--;
-            printf("File '%s' deleted.\n", filename);
-            return;
-        }
+            printf("File '%s' deleted successfully.\n", filename);
+        return;
+}
+        
     }
     printf("File '%s' not found for deletion.\n", filename);
 }
