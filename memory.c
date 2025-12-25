@@ -1,3 +1,10 @@
+/**
+ * memory.c
+ * Simulation of Paged Memory Management with FIFO Replacement.
+ * * Logic: Implements logical-to-physical address translation. 
+ * When physical frames are exhausted, the First-In-First-Out (FIFO) 
+ * algorithm selects the oldest frame for eviction.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include "memory.h"
@@ -136,6 +143,14 @@ void display_memory_status(ProcessMemoryInfo p_infos[], int num_processes_active
         }
     }
     printf("\nTotal Page Faults: %d\n", page_fault_count);
+
+    // like a performance indicator ig
+    float hit_rate = 0;
+    int total_accesses = page_fault_count + (some_hit_counter); // adding a hitratio function
+    if (total_accesses > 0) {
+        hit_rate = ((float)(total_accesses - page_fault_count) / total_accesses) * 100;
+        printf("System Performance: %.2f%% Hit Rate\n", hit_rate);
+}
 }
 
 int get_page_fault_count() {
